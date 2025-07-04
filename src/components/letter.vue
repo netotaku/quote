@@ -1,6 +1,13 @@
 <template>
   <div v-if="!isPunctuation" class="letter">
-    <input class="input" type="text" :value="show() ? char : '_'" />
+    <input 
+        class="input" 
+        type="text" 
+        :value="show() ? char : '_'" 
+        :disabled="show()"
+        @focus="handleFocus"
+        @blur="handleBlur"
+    />
     <label>{{ letterMap[char.toUpperCase()] }}</label>
   </div>
   <div v-else class="letter">
@@ -19,6 +26,14 @@
 
     function show(){
         return (revealedLetters[i] != undefined)
+    }
+
+    function handleFocus(){
+        
+    }
+
+    function handleBlur(){
+        
     }
 
     // console.log(i, char, show())       
@@ -49,11 +64,11 @@
         border: 0;
         text-align: center;
         background: none;
-        border: solid 1px orange;
+        // border: solid 1px orange;
         &:focus{
             background: none;
             outline: none;
-            border-color: rgba(255,255,255, .5);
+           // border-color: rgba(255,255,255, .5);
         }
     }
 
