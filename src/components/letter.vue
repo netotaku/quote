@@ -1,6 +1,6 @@
 <template>
   <div v-if="!isPunctuation" class="letter">
-    <input class="input" type="text" :value="char" />
+    <input class="input" type="text" :value="show() ? char : '_'" />
     <label>{{ letterMap[char.toUpperCase()] }}</label>
   </div>
   <div v-else class="letter">
@@ -10,11 +10,18 @@
 
 <script setup>
 
-    import { computed, inject} from 'vue'
+    import { computed, inject } from 'vue'
 
-    const { char } = defineProps({ char: String })
+    const { char, i } = defineProps({ char: String, i: Number })
     const letterMap = inject('letterMap')
+    const revealedLetters = inject('revealedLetters')
     const isPunctuation = computed(() => /^[^\w\s]$/.test(char))
+
+    function show(){
+        return (revealedLetters[i] != undefined)
+    }
+
+    // console.log(i, char, show())       
 
 </script>
 

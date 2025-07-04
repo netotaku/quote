@@ -1,22 +1,50 @@
 <template>
   <span class="word">
     <Letter
-      v-for="(char, index) in letters"
+      v-for="(letter, index) in lettersWithIndices"
       :key="index"
-      :char="char"
+      :i="letter.index"
+      :char="letter.char"
     />
   </span>
 </template>
 
 <script setup>
+import { ref, onBeforeMount, inject } from 'vue'
 import Letter from './Letter.vue'
-import { computed } from 'vue'
+
+const letterCount = inject('letterCount') // Should be a ref from parent
+
+// debug //////
+// if (!letterCount || typeof letterCount.value !== 'number') {
+//   throw new Error('letterCount must be injected as a ref and initialised as a number.')
+// }
+///////////////
 
 const props = defineProps({
   text: String
 })
 
-const letters = computed(() => props.text.split(''))
+const lettersWithIndices = ref([])
+
+onBeforeMount(() => {
+  lettersWithIndices.value = []
+
+  for (const char of props.text) {
+    const upper = char.toUpperCase()
+    const isLetter = /^[A-Z]$/.test(upper)
+
+    // Only increment for valid letters
+    const index = isLetter ? letterCount.value++ : null
+
+    // console.log(index, upper)
+
+    lettersWithIndices.value.push({
+      char,
+      index
+    })
+  }
+})
 </script>
 
 <style scoped lang="scss">
