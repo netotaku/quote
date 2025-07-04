@@ -1,7 +1,7 @@
 <template>
   <div v-if="!isPunctuation" class="letter">
     <input class="input" type="text" :value="char" />
-    <label>10</label>
+    <label>{{ letterMap[char.toUpperCase()] }}</label>
   </div>
   <div v-else class="letter">
     <span class="input">{{ char }}</span>
@@ -9,22 +9,30 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 
-const { char } = defineProps({
-  char: String
-})
+    import { computed, inject} from 'vue'
 
-const isPunctuation = computed(() => /^[^\w\s]$/.test(char))
+    const { char } = defineProps({ char: String })
+    const letterMap = inject('letterMap')
+    const isPunctuation = computed(() => /^[^\w\s]$/.test(char))
+
 </script>
 
 <style scoped lang="scss">
+
     .letter{
         display: inline-block;
+        &:hover{
+            label{
+                color: white;
+            }
+        }
     }
 
     .input{
         display: block;
+        position: relative;
+        border-radius: 3px;
         appearance: none;
         font-family: inherit;
         font-size: inherit;
@@ -34,17 +42,19 @@ const isPunctuation = computed(() => /^[^\w\s]$/.test(char))
         border: 0;
         text-align: center;
         background: none;
-        border: 1px orange;
+        border: solid 1px orange;
         &:focus{
             background: none;
             outline: none;
-            border-color: #f60;
+            border-color: rgba(255,255,255, .5);
         }
     }
+
     label{
         display: block;
         font-size: .3em;
         text-align: center;
         color: rgba(255,255,255, .5);
     }
+
 </style>
