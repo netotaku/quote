@@ -1,10 +1,10 @@
 <template>
-  <div v-if="!isPunctuation" class="letter">
+  <div v-if="!isPunctuation" :class="[baseClass, incorrect ? 'incorrect' : '']">
     <input 
         class="input" 
         type="text" 
-        :value="show() ? char : '_'" 
-        :disabled="show()"
+        v-model="displayValue"        
+        :disabled="show"
         @focus="handleFocus"
         @blur="handleBlur"
     />
@@ -17,27 +17,50 @@
 
 <script setup>
 
-    import { computed, inject } from 'vue'
+    import { onMounted, computed, inject, ref } from 'vue'
 
+    const displayValue  = ref(String);
+    const defaultValue  = ref(String);
+    const show          = ref(Boolean);
+    const incorrect     = ref(false);
+    const baseClass     = 'letter'
+    
     const { char, i } = defineProps({ char: String, i: Number })
+
     const letterMap = inject('letterMap')
     const revealedLetters = inject('revealedLetters')
     const isPunctuation = computed(() => /^[^\w\s]$/.test(char))
-
-    function show(){
-        return (revealedLetters[i] != undefined)
+    
+    function init(){
+        show.value = (revealedLetters[i] != undefined)
+        displayValue.value = defaultValue.value = show.value ? char : '_'        
     }
 
     function handleFocus(){
-        
+        displayValue.value = ""
     }
 
     function handleBlur(){
-        
+        if( displayValue.value != defaultValue.value || displayValue.value == "" ){
+            incorrect.value = false
+            if( displayValue.value != "" ){
+                if( displayValue.value.toUpperCase() == char.toUpperCase() ){
+                    show.value = true
+                    console.log("Correct", displayValue.value, char)
+                } else {
+                    incorrect.value = true
+                    console.log("Incorrect", displayValue.value, char)
+                }
+            } else {
+                displayValue.value = defaultValue.value
+            }
+        }   
     }
 
-    // console.log(i, char, show())       
+    //////////
 
+    onMounted(init)
+     
 </script>
 
 <style scoped lang="scss">
@@ -49,6 +72,10 @@
                 color: white;
             }
         }
+    }
+
+    .incorrect{
+        color: red;
     }
 
     .input{

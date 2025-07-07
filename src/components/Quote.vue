@@ -52,6 +52,7 @@
   ///// 
 
   function generateLetterMap(text) {
+    
     // 1. Extract uppercase letters only
     const lettersOnly = text.toUpperCase().replace(/[^A-Z]/g, '')
 
@@ -63,6 +64,7 @@
 
     // 4. Map letters to 2-digit codes
     const map = {}
+    
     shuffled.forEach((letter, index) => {
       map[letter] = (index + 1).toString().padStart(2, '0')
     })
