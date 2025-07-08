@@ -75,6 +75,12 @@
 
   ///// 
 
+  const revealSettings = {
+    vowels: 2,
+    consonants: 4,
+    instancesPerLetter: 3
+  }
+
   function sample(arr) {
     return arr[Math.floor(Math.random() * arr.length)]
   }
@@ -89,46 +95,48 @@
     return result
   }
 
-  function selectStarterLetters(text, map, revealedLetters) {
-    const upper = text.toUpperCase()
-    const vowels = ['A', 'E', 'I', 'O', 'U']
-    const lettersOnly = upper.replace(/[^A-Z]/g, '')
-    const uniqueLetters = [...new Set(lettersOnly)]
+  function selectStarterLetters(text, map, revealedLetters, settings = revealSettings) {
+  const upper = text.toUpperCase()
+  const vowels = ['A', 'E', 'I', 'O', 'U']
+  const lettersOnly = upper.replace(/[^A-Z]/g, '')
+  const uniqueLetters = [...new Set(lettersOnly)]
 
-    const availableVowels = uniqueLetters.filter(l => vowels.includes(l))
-    const availableConsonants = uniqueLetters.filter(l => !vowels.includes(l))
+  const availableVowels = uniqueLetters.filter(l => vowels.includes(l))
+  const availableConsonants = uniqueLetters.filter(l => !vowels.includes(l))
 
-    const picks = []
+  const picks = []
 
-    if (availableVowels.length) {
-      picks.push(sample(availableVowels))
-    }
+  // ✅ pick up to `settings.vowels` vowels
+  picks.push(...sampleMany(availableVowels, settings.vowels))
 
-    const consonantCount = Math.random() > 0.5 ? 2 : 1
-    picks.push(...sampleMany(availableConsonants, consonantCount))
+  // ✅ pick up to `settings.consonants` consonants
+  const consonantCount = Math.min(settings.consonants, availableConsonants.length)
+  picks.push(...sampleMany(availableConsonants, consonantCount))
 
-    let letterIndex = 0
+  const instancesPerLetter = {}
 
-    for (let i = 0; i < upper.length; i++) {
-      const char = upper[i]
+  let letterIndex = 0
 
-      if (/^[A-Z]$/.test(char)) {
-        if (picks.includes(char)) {
-          // Reveal only 1–2 instances of each letter
-          if (!revealedLetters[letterIndex]) {
-            revealedLetters[letterIndex] = char
+  for (let i = 0; i < upper.length; i++) {
+    const char = upper[i]
 
-            // Optional: limit per letter to 2 occurrences
-            const count = Object.values(revealedLetters).filter(c => c === char).length
-            if (count >= 2) picks.splice(picks.indexOf(char), 1)
-          }
+    if (/^[A-Z]$/.test(char)) {
+      if (picks.includes(char)) {
+        if (!instancesPerLetter[char]) {
+          instancesPerLetter[char] = 0
         }
 
-        letterIndex++
+        if (instancesPerLetter[char] < settings.instancesPerLetter) {
+          revealedLetters[letterIndex] = char
+          instancesPerLetter[char]++
+        }
       }
+
+      letterIndex++
     }
-    // console.log(revealedLetters)
   }
+}
+
 
 
   /////

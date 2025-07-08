@@ -19,16 +19,18 @@
 
     import { onMounted, computed, inject, ref } from 'vue'
 
+    const { char, i } = defineProps({ char: String, i: Number })
+
     const displayValue  = ref(String);
     const defaultValue  = ref(String);
     const show          = ref(Boolean);
     const incorrect     = ref(false);
     const baseClass     = 'letter'
     
-    const { char, i } = defineProps({ char: String, i: Number })
+    const letterMap         = inject('letterMap')
+    const revealedLetters   = inject('revealedLetters')
+    const lives             = inject('lives')
 
-    const letterMap = inject('letterMap')
-    const revealedLetters = inject('revealedLetters')
     const isPunctuation = computed(() => /^[^\w\s]$/.test(char))
     
     function init(){
@@ -46,10 +48,11 @@
             if( displayValue.value != "" ){
                 if( displayValue.value.toUpperCase() == char.toUpperCase() ){
                     show.value = true
-                    console.log("Correct", displayValue.value, char)
+                    // console.log("Correct", displayValue.value, char)
                 } else {
                     incorrect.value = true
-                    console.log("Incorrect", displayValue.value, char)
+                    lives.value--
+                    // console.log("Incorrect", displayValue.value, char)
                 }
             } else {
                 displayValue.value = defaultValue.value

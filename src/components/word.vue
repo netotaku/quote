@@ -15,12 +15,6 @@ import Letter from './Letter.vue'
 
 const letterCount = inject('letterCount') // Should be a ref from parent
 
-// debug //////
-// if (!letterCount || typeof letterCount.value !== 'number') {
-//   throw new Error('letterCount must be injected as a ref and initialised as a number.')
-// }
-///////////////
-
 const props = defineProps({
   text: String
 })
