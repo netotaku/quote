@@ -33,6 +33,7 @@
 
   async function fetchQuote() {
 
+    loading.value = true
     letterCount.value = 0
 
     const res = await fetch('/.netlify/functions/quote')
@@ -96,48 +97,47 @@
   }
 
   function selectStarterLetters(text, map, revealedLetters, settings = revealSettings) {
-  const upper = text.toUpperCase()
-  const vowels = ['A', 'E', 'I', 'O', 'U']
-  const lettersOnly = upper.replace(/[^A-Z]/g, '')
-  const uniqueLetters = [...new Set(lettersOnly)]
+    
+    const upper = text.toUpperCase()
+    const vowels = ['A', 'E', 'I', 'O', 'U']
+    const lettersOnly = upper.replace(/[^A-Z]/g, '')
+    const uniqueLetters = [...new Set(lettersOnly)]
 
-  const availableVowels = uniqueLetters.filter(l => vowels.includes(l))
-  const availableConsonants = uniqueLetters.filter(l => !vowels.includes(l))
+    const availableVowels = uniqueLetters.filter(l => vowels.includes(l))
+    const availableConsonants = uniqueLetters.filter(l => !vowels.includes(l))
 
-  const picks = []
+    const picks = []
 
-  // ✅ pick up to `settings.vowels` vowels
-  picks.push(...sampleMany(availableVowels, settings.vowels))
+    // ✅ pick up to `settings.vowels` vowels
+    picks.push(...sampleMany(availableVowels, settings.vowels))
 
-  // ✅ pick up to `settings.consonants` consonants
-  const consonantCount = Math.min(settings.consonants, availableConsonants.length)
-  picks.push(...sampleMany(availableConsonants, consonantCount))
+    // ✅ pick up to `settings.consonants` consonants
+    const consonantCount = Math.min(settings.consonants, availableConsonants.length)
+    picks.push(...sampleMany(availableConsonants, consonantCount))
 
-  const instancesPerLetter = {}
+    const instancesPerLetter = {}
 
-  let letterIndex = 0
+    let letterIndex = 0
 
-  for (let i = 0; i < upper.length; i++) {
-    const char = upper[i]
+    for (let i = 0; i < upper.length; i++) {
+      const char = upper[i]
 
-    if (/^[A-Z]$/.test(char)) {
-      if (picks.includes(char)) {
-        if (!instancesPerLetter[char]) {
-          instancesPerLetter[char] = 0
+      if (/^[A-Z]$/.test(char)) {
+        if (picks.includes(char)) {
+          if (!instancesPerLetter[char]) {
+            instancesPerLetter[char] = 0
+          }
+
+          if (instancesPerLetter[char] < settings.instancesPerLetter) {
+            revealedLetters[letterIndex] = char
+            instancesPerLetter[char]++
+          }
         }
 
-        if (instancesPerLetter[char] < settings.instancesPerLetter) {
-          revealedLetters[letterIndex] = char
-          instancesPerLetter[char]++
-        }
+        letterIndex++
       }
-
-      letterIndex++
     }
   }
-}
-
-
 
   /////
 
