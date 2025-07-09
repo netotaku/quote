@@ -9,12 +9,18 @@
       />
       <cite>— {{ author }}</cite>
     </blockquote>
+
+    <footer class="footer">
+      <div class="lives">♡ {{ lives }} / Streak {{streak }}</div>
+      <a @click.prevent="next" href="">Next quote</a>
+    </footer>
+  
   </div>
 </template>
 
 <script setup>
 
-  import { ref, onMounted, computed, provide } from 'vue'
+  import { ref, onMounted, computed, provide, inject } from 'vue'
   import Word from './Word.vue'
 
   const loading = ref(true)
@@ -28,6 +34,9 @@
   provide('letterMap', letterMap) 
   provide('revealedLetters', revealedLetters)
   provide('letterCount', letterCount)
+  
+  const lives = inject('lives')
+  const streak = inject('streak')
 
   /////  
 
@@ -48,6 +57,11 @@
     generateLetterMap(quote.value)
     selectStarterLetters(quote.value, letterMap.value, revealedLetters)
 
+  }
+
+  function next(){
+    lives.value--
+    fetchQuote()
   }
 
   ///// 
@@ -149,5 +163,17 @@
     cite{
       margin-top: .6em;  
       display: block;
+    }
+
+    .footer{
+      padding: 5vw;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      font-size: .4em;
+      display: flex;
+      justify-content: space-between;
+      background: rgba(0,0,0,.1)
     }
 </style>

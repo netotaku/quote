@@ -3,30 +3,20 @@
   import Quote from './components/Quote.vue'
 
   const lives = ref(4)
+  const streak = ref(0)
 
   provide("lives", lives)
+  provide("streak", streak)
 
 </script>
 
 <template>
   <Quote />
-  <footer class="footer">
-    <div class="lives">♡ {{ lives }}</div>
-    <!-- <button class="button">Next quote</button> -->
-  </footer>
 </template>
 
 <style scoped lang="scss">
 
-  .footer{
-    position: absolute;
-    bottom: 5vw;
-    left: 5vw;
-    right: 5vw;
-    font-size: .6em;
-    display: flex;
-    justify-content: space-between;
-  }
+
 
   .button{
     appearance: none;

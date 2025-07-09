@@ -15,3 +15,10 @@ html, body{
 body{
     padding: 5vw;
 }
+
+a{
+    color: white;
+    &:hover{
+        text-decoration: none;
+    }
+}
