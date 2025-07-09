@@ -5,6 +5,7 @@
       :key="index"
       :i="letter.index"
       :char="letter.char"
+      :fetchQuote="fetchQuote"
     />
   </span>
 </template>
@@ -15,8 +16,9 @@ import Letter from './Letter.vue'
 
 const letterCount = inject('letterCount') // Should be a ref from parent
 
-const props = defineProps({
-  text: String
+const { text, fetchQuote } = defineProps({
+  text: String, 
+  fetchQuote: Function
 })
 
 const lettersWithIndices = ref([])
@@ -24,7 +26,7 @@ const lettersWithIndices = ref([])
 onBeforeMount(() => {
   lettersWithIndices.value = []
 
-  for (const char of props.text) {
+  for (const char of text) {
     const upper = char.toUpperCase()
     const isLetter = /^[A-Z]$/.test(upper)
 

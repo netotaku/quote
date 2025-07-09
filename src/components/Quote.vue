@@ -1,14 +1,21 @@
 <template>
   <div class="quote">
-    <p v-if="loading">Fetching wisdom...</p>
-    <blockquote v-else class="quote">
-      <Word
-        v-for="(word, index) in words"
-        :key="index"
-        :text="word"
-      />
-      <cite>— {{ author }}</cite>
-    </blockquote>
+    <div v-if="lives > 0">
+      <p v-if="loading">Fetching wisdom...</p>
+      <blockquote v-else class="quote">
+        <Word
+          v-for="(word, index) in words"
+          :key="index"
+          :text="word"
+          :fetchQuote="fetchQuote"
+        />
+        <cite>— {{ author }}</cite>
+      </blockquote>
+    </div>
+    <div v-else>
+      <p>Game over</p>
+      <a @click.prevent="newGame" href="">Play again</a>
+    </div>
 
     <footer class="footer">
       <div class="lives">♡ {{ lives }} / Streak {{streak }}</div>
@@ -23,25 +30,28 @@
   import { ref, onMounted, computed, provide, inject } from 'vue'
   import Word from './Word.vue'
 
-  const loading = ref(true)
-  const quote = ref('')
-  const author = ref('')
+  const loading   = ref(true)
+  const quote     = ref('')
+  const author    = ref('')
   const letterMap = ref({}) 
   const revealedLetters = ref({}) 
-  const words = computed(() => { return quote.value.split(' ') })
+  const words     = computed(() => { return quote.value.split(' ') })
   const letterCount = ref(0)
-
+  const solvedCount = ref(0)
+  
   provide('letterMap', letterMap) 
   provide('revealedLetters', revealedLetters)
   provide('letterCount', letterCount)
-  
+  provide('solvedCount', solvedCount)
+
   const lives = inject('lives')
   const streak = inject('streak')
-
+  
   /////  
 
   async function fetchQuote() {
 
+    solvedCount.value = 0
     loading.value = true
     letterCount.value = 0
 
@@ -60,7 +70,15 @@
   }
 
   function next(){
+    loading.value = true
     lives.value--
+    streak.value = 0 
+    fetchQuote()
+  }
+
+  function newGame(){
+    lives.value = 4
+    streak.value = 0    
     fetchQuote()
   }
 
@@ -92,8 +110,8 @@
 
   const revealSettings = {
     vowels: 2,
-    consonants: 4,
-    instancesPerLetter: 3
+    consonants: 2,
+    instancesPerLetter: 2
   }
 
   function sample(arr) {
@@ -132,7 +150,7 @@
     const instancesPerLetter = {}
 
     let letterIndex = 0
-
+  
     for (let i = 0; i < upper.length; i++) {
       const char = upper[i]
 

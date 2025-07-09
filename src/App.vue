@@ -4,9 +4,11 @@
 
   const lives = ref(4)
   const streak = ref(0)
+  // const gameOver = ref(false)
 
   provide("lives", lives)
   provide("streak", streak)
+  // provide("gameOver", gameOver)
 
 </script>
 

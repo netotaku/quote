@@ -3,6 +3,7 @@
     <input 
         class="input" 
         type="text" 
+        maxlength="1" 
         v-model="displayValue"        
         :disabled="show"
         @focus="handleFocus"
@@ -19,7 +20,11 @@
 
     import { onMounted, computed, inject, ref } from 'vue'
 
-    const { char, i } = defineProps({ char: String, i: Number })
+    const { char, i, fetchQuote } = defineProps({ 
+        char: String, 
+        i: Number,
+        fetchQuote: Function 
+    })
 
     const displayValue  = ref(String);
     const defaultValue  = ref(String);
@@ -30,11 +35,17 @@
     const letterMap         = inject('letterMap')
     const revealedLetters   = inject('revealedLetters')
     const lives             = inject('lives')
-
+    const solvedCount       = inject('solvedCount')
+    const letterCount       = inject('letterCount')
+    const streak            = inject('streak')
+    
     const isPunctuation = computed(() => /^[^\w\s]$/.test(char))
     
     function init(){
         show.value = (revealedLetters[i] != undefined)
+        if(show.value){
+            solvedCount.value++
+        }        
         displayValue.value = defaultValue.value = show.value ? char : '_'        
     }
 
@@ -49,10 +60,15 @@
                 if( displayValue.value.toUpperCase() == char.toUpperCase() ){
                     show.value = true
                     // console.log("Correct", displayValue.value, char)
+                    solvedCount.value++
+                    // console.log(solvedCount.value, letterCount.value)
+                    if(solvedCount.value == letterCount.value){
+                        streak.value++
+                        fetchQuote()
+                    }
                 } else {
                     incorrect.value = true
                     lives.value--
-                    // console.log("Incorrect", displayValue.value, char)
                 }
             } else {
                 displayValue.value = defaultValue.value
