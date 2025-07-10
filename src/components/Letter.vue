@@ -1,6 +1,9 @@
 <template>
   <div v-if="!isPunctuation" :class="[baseClass, incorrect ? 'incorrect' : '']">
     <input 
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"    
         class="input" 
         type="text" 
         maxlength="1" 
@@ -110,11 +113,17 @@
         border: 0;
         text-align: center;
         background: none;
+        text-transform: lowercase;
         // border: solid 1px orange;
         &:focus{
             background: none;
             outline: none;
            // border-color: rgba(255,255,255, .5);
+        }
+        &:disabled{
+            color: white;
+            opacity: 1; // important to override default greyed-out look
+            -webkit-text-fill-color: white; // for Safari/iOS
         }
     }
 
